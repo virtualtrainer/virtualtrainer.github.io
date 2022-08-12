@@ -37,6 +37,7 @@ plugins:
 include:
  - _pages
  - _dashboard
+ - _assets
 # - .htaccess
 
 # Exclude from processing.
