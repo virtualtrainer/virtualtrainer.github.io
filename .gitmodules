@@ -1,3 +1,6 @@
 [submodule "3dmodels"]
 	path = 3dmodels
 	url = https://github.com/virtualtrainer/3dmodels
+[submodule "bvh"]
+	path = bvh
+	url = https://github.com/virtualtrainer/bvh
