@@ -14,20 +14,42 @@
                     var password = $("#txt_pwd").val().trim();
 
                     if( email != "" && password != "" ){
-                        $.ajax({
-                            url:'https://vtaapi.herokuapp.com/api/auth/signinaa',
-                            type:'post',
-                            data:{email:email,password:password},
-                            success:function(response){
-                                var msg = "";
-                                if(response === '200'){
-                                    window.location = "home.php";
-                                }else{
-                                    msg = "Invalid username and password!";
-                                }
-                                $("#message").html(msg);
-                            }
-                        });
+                        var settings = {
+  "url": "https://vtaapi.herokuapp.com/api/auth/signinaa",
+  "method": "POST",
+  "timeout": 0,
+  "headers": {
+    "Content-Type": "application/json"
+  },
+  "data": JSON.stringify({
+    "email": email,
+    "password": password
+  }),
+};
+
+$.ajax(settings).done(function (response) {
+ // console.log(response);
+ //var json = $.parseJSON(response);
+
+ //var jsonString = response;
+
+
+//var elements = jQuery.parseJSON( '[' + response + ']' );
+//var obj = JSON.parse( jsonString );
+
+console.log(response.id);
+
+if (response.id == null){alert('this is not working')}
+else {alert('sdfsdfsfsdfs')}
+;
+ 
+console.log(response);
+
+ //alert(json.id);
+  if(response.id==200){
+    alert(dude);
+  };
+});
                     }
                 });
 
