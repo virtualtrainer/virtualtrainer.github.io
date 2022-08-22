@@ -10,10 +10,46 @@
     <!-- Favicon icon -->
     <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon.png">
     <link href="/css/style1.css" rel="stylesheet">
+    <script>
+        function setCookie(cname,cvalue,exdays) {
+          const d = new Date();
+          d.setTime(d.getTime() + (exdays*24*60*60*1000));
+          let expires = "expires=" + d.toUTCString();
+          document.cookie = cname + "=" + cvalue + ";" + expires + ";path=/";
+        }
+        
+        function getCookie(cname) {
+          let name = cname + "=";
+          let decodedCookie = decodeURIComponent(document.cookie);
+          let ca = decodedCookie.split(';');
+          for(let i = 0; i < ca.length; i++) {
+            let c = ca[i];
+            while (c.charAt(0) == ' ') {
+              c = c.substring(1);
+            }
+            if (c.indexOf(name) == 0) {
+              return c.substring(name.length, c.length);
+            }
+          }
+          return "";
+        }
+        
+        function checkCookie() {
+          let user = getCookie("username");
+          if (user != "") {
+            alert("Welcome again " + user);
+          } else {
+             user = prompt("Please enter your name:","");
+             if (user != "" && user != null) {
+               setCookie("username", user, 30);
+             }
+          }
+        }
+        </script>
 
 </head>
 
-<body class="h-100">
+<body onload="checkCookie()" class="h-100">
     <div class="authincation h-100">
         <div class="container h-100">
             <div class="row justify-content-center h-100 align-items-center">
@@ -48,7 +84,7 @@
                                         </div>
                                     </form>
                                     <div class="new-account mt-3">
-                                        <p>Don't have an account? <a class="text-primary" href="/page-register.html">Sign up</a></p>
+                                        <p>Don't have an account? <a class="text-primary" href="/dashboard/page-register.html">Sign up</a></p>
                                     </div>
                                 </div>
                             </div>
@@ -64,9 +100,9 @@
         Scripts
     ***********************************-->
     <!-- Required vendors -->
-    <script src="/global/global.min.js"></script>
+     <!--<script src="/global/global.min.js"></script>-->
 	<script src="/bootstrap-select/dist/js/bootstrap-select.min.js"></script>
-    <script src="/js/custom.min.js"></script>
+    <!-- <script src="/js/custom.min.js"></script>-->
     <script src="/js/deznav-init.js"></script>
 
 </body>
