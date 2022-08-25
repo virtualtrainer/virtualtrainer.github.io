@@ -1,0 +1,55 @@
+{
+    "items": [
+      {
+        "image": "/images/resource/feature-3.jpg",
+        "key": "First",
+        "value": 100
+      },
+      {
+        "image": "/images/resource/feature-2.jpg",
+        "key": "Second",
+        "value": 300
+      },
+      {
+        "image": "/images/resource/feature-1.jpg",
+        "key": "trird",
+        "value": false
+      },
+      {
+        "image": "/images/resource/feature-1.jpg",
+        "key": "Second",
+        "value": false
+      },
+      {
+        "image": "/images/resource/feature-5.jpg",
+        "key": "Second",
+        "value": false
+      },
+      {
+        "image": "/images/resource/feature-1.jpg",
+        "key": "Second",
+        "value": false
+      },
+      {
+        "image": "/images/resource/feature-1.jpg",
+        "key": "Second",
+        "value": false
+      },
+      {
+        "image": "/images/resource/feature-1.jpg",
+        "key": "Second",
+        "value": false
+      },
+      {
+        "image": "/images/resource/feature-1.jpg",
+        "key": "Second",
+        "value": false
+      }
+    ],
+    "obj": {
+      "number": 1.2345e-6,
+      "enabled": true
+    },
+    "message": "Strings have to be in double-quotes."
+  }
+  
