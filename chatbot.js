@@ -2,10 +2,21 @@ function init() {
     let res_elm = document.createElement("div");
     res_elm.innerHTML="Hello Myself Aco, How can I help you?" ;
     res_elm.setAttribute("class","left");
+  //  let audio = new Audio(`https://nodetts.herokuapp.com/?text=Hello Myself Aco, How can I help you?`);
+  //  audio.play();
+
+
  
     document.getElementById('msg').appendChild(res_elm);
 }
  
+const audioCtx = new AudioContext();
+const audio1 = new Audio("https://nodetts.herokuapp.com/?text=Hello Myself Aco, How can I help you?");
+const source = audioCtx.createMediaElementSource(audio1);
+source.connect(audioCtx.destination);
+audio1.play();
+
+
 
 document.getElementById('reply').addEventListener("click", async (e) => {
     e.preventDefault();
@@ -29,6 +40,12 @@ document.getElementById('reply').addEventListener("click", async (e) => {
         }).then(data => {
             res = JSON.stringify(data.data.text)
             console.log(data)
+            console.log(res)
+            str = res.substring(1);
+            str1 = str.slice(0, -1);
+            console.log(str1)
+            var audio = new Audio(`https://nodetts.herokuapp.com/?text=${str1}`);
+            audio.play();
         },
         {
           headers: {
@@ -47,7 +64,7 @@ document.getElementById('reply').addEventListener("click", async (e) => {
         container2.setAttribute("class","msgCon2");
  
         data_req.innerHTML = req ;
-        data_res.innerHTML = res ;
+        data_res.innerHTML = str1 ;
  
  
         data_req.setAttribute("class","right");
