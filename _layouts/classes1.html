@@ -164,12 +164,55 @@ xhr.send();
 <div class="box-cart-products"></div>
 
 <script>
-  var itemImages = ["image1", "image2", "image3"]
-  var itemNames = ["name1", "name2", "name3"]
+  var itemImages = [{
+        "image": "/images/resource/feature-3.jpg",
+        "cat": "First",
+        "name": 100,
+		"url": "",
+		"openline": ""
+      },
+      {
+        "image": "/images/resource/feature-2.jpg",
+        "cat": "Second",
+        "name": 300
+      },
+      {
+        "image": "/images/resource/feature-1.jpg",
+        "cat": "trird",
+        "name": false
+      },
+      {
+        "image": "/images/resource/feature-1.jpg",
+        "cat": "Second",
+        "name": false
+      },
+      {
+        "image": "/images/resource/feature-5.jpg",
+        "cat": "Second",
+        "name": false
+      },
+      {
+        "image": "/images/resource/feature-1.jpg",
+        "cat": "Second",
+        "name": false
+      },
+      {
+        "image": "/images/resource/feature-1.jpg",
+        "cat": "Second",
+        "name": false
+      },
+      {
+        "image": "/images/resource/feature-1.jpg",
+        "cat": "Second",
+        "name": false
+      }
+    ]
+
 
   $(itemImages).each(function(i, e) {
     $(".box-cart-products").append(
-      '<div class="box-cart-product"> <div class="box-cart-product-image"><img src="' + itemImages[i] + '"/> </div> <div class="box-cart-product-name"> <span>' + itemNames[i] + '</span></div></div>'
+      '<div class="box-cart-product"> <div class="box-cart-product-image">'+
+		'<img src="' + itemImages[i].image + '"/> </div> <div class="box-cart-product-name"> <span>' + itemImages[i].cat + '</span></div></div>'
     )
   })
 </script>
