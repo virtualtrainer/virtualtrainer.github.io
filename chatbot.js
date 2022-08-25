@@ -6,32 +6,6 @@ function init() {
     document.getElementById('msg').appendChild(res_elm);
 }
  
-async function getData() {
-    try {
-       let res = await axios({
-            url: 'https://api.wit.ai/message?v=20220825&q=hi',
-            method: 'get',
-           // timeout: 8000,
-            headers: {
-                'Content-Type': 'application/json',
-                Authorization: 'Bearer B53WRIGPEE3DGEPK3IYEJ3BP3WOPNLPE'
-            }
-        })
-        if(res.status == 200){
-            // test for status you want, etc
-            console.log(res.status)
-        }    
-        // Don't forget to return something   
-        return res.data
-    }
-    catch (err) {
-        console.error(err);
-    }
-}
-
-getData()
-.then(res => console.log(res)) 
-
 
 document.getElementById('reply').addEventListener("click", async (e) => {
     e.preventDefault();
@@ -53,7 +27,7 @@ document.getElementById('reply').addEventListener("click", async (e) => {
                 Authorization: 'Bearer B53WRIGPEE3DGEPK3IYEJ3BP3WOPNLPE'
             }
         }).then(data => {
-            res = JSON.stringify(data.data.response)
+            res = JSON.stringify(data.data.text)
             console.log(data)
         },
         {
