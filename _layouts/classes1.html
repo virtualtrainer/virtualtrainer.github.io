@@ -119,7 +119,7 @@
 
 <script> 
 
-const $showDataa = $("#show-data");
+const $showDataa = $(".show-data");
 
 
 
@@ -161,178 +161,17 @@ xhr.send();
 </script>
 
 
-<div class="box-cart-products"></div>
-
-<script>
-  var itemImages = [{
-        "image": "/images/resource/feature-3.jpg",
-        "cat": "First",
-        "name": 100,
-		"url": "",
-		"openline": ""
-      },
-      {
-        "image": "/images/resource/feature-2.jpg",
-        "cat": "Second",
-        "name": 300
-      },
-      {
-        "image": "/images/resource/feature-1.jpg",
-        "cat": "trird",
-        "name": false
-      },
-      {
-        "image": "/images/resource/feature-1.jpg",
-        "cat": "Second",
-        "name": false
-      },
-      {
-        "image": "/images/resource/feature-5.jpg",
-        "cat": "Second",
-        "name": false
-      },
-      {
-        "image": "/images/resource/feature-1.jpg",
-        "cat": "Second",
-        "name": false
-      },
-      {
-        "image": "/images/resource/feature-1.jpg",
-        "cat": "Second",
-        "name": false
-      },
-      {
-        "image": "/images/resource/feature-1.jpg",
-        "cat": "Second",
-        "name": false
-      }
-    ]
 
 
-  $(itemImages).each(function(i, e) {
-    $(".box-cart-products").append(
-      '<div class="box-cart-product"> <div class="box-cart-product-image">'+
-		'<img src="' + itemImages[i].image + '"/> </div> <div class="box-cart-product-name"> <span>' + itemImages[i].cat + '</span></div></div>'
-    )
-  })
-</script>
 
-<div id="show-data"></div>
-	<div id="images"></div>
+
+
+
 	<!-- Classess Page Section -->
 	<section class="classess-page-section">
+		
 		<div class="auto-container">
-			<div class="row clearfix">
-				
-				<!-- Classess Block -->
-				<div class="classess-block col-lg-4 col-md-6 col-sm-12">
-					<div class="inner-box">
-						<div class="image">
-							<a href="classes-detail.html"><img src="/images/resource/feature-1.jpg" alt="" /></a>
-							<div class="icon-box">
-								<span class="icon flaticon-tools-and-utensils-1"></span>
-							</div>
-						</div>
-						<div class="lower-content">
-							<div class="title">GYM</div>
-							<h4><a href="classes-detail.html">Psycho Training</a></h4>
-							<div class="text">Winning means you’re willing to go longer, work harder for more.</div>
-							<a class="read-more" href="classes-detail.html">Read More</a>
-						</div>
-					</div>
-				</div>
-				
-				<!-- Classess Block -->
-				<div class="classess-block col-lg-4 col-md-6 col-sm-12">
-					<div class="inner-box">
-						<div class="image">
-							<a href="classes-detail.html"><img src="/images/resource/feature-2.jpg" alt="" /></a>
-							<div class="icon-box">
-								<span class="icon flaticon-muscle"></span>
-							</div>
-						</div>
-						<div class="lower-content">
-							<div class="title">CARDIO</div>
-							<h4><a href="classes-detail.html">Self Defence</a></h4>
-							<div class="text">Don’t practice until you get it right practice until can’t wrong</div>
-							<a class="read-more" href="classes-detail.html">Read More</a>
-						</div>
-					</div>
-				</div>
-				
-				<!-- Classess Block -->
-				<div class="classess-block col-lg-4 col-md-6 col-sm-12">
-					<div class="inner-box">
-						<div class="image">
-							<a href="classes-detail.html"><img src="/images/resource/feature-3.jpg" alt="" /></a>
-							<div class="icon-box">
-								<span class="icon flaticon-people"></span>
-							</div>
-						</div>
-						<div class="lower-content">
-							<div class="title">Fitness</div>
-							<h4><a href="classes-detail.html">FITNESS FOR MAN</a></h4>
-							<div class="text">Winning means you’re willing to go longer, work harder for more.</div>
-							<a class="read-more" href="classes-detail.html">Read More</a>
-						</div>
-					</div>
-				</div>
-				
-				<!-- Classess Block -->
-				<div class="classess-block col-lg-4 col-md-6 col-sm-12">
-					<div class="inner-box">
-						<div class="image">
-							<a href="classes-detail.html"><img src="/images/resource/feature-4.jpg" alt="" /></a>
-							<div class="icon-box">
-								<span class="icon flaticon-fitness"></span>
-							</div>
-						</div>
-						<div class="lower-content">
-							<div class="title">STRENGTH</div>
-							<h4><a href="classes-detail.html">Strength Training</a></h4>
-							<div class="text">Winning means you’re willing to go longer, work harder for more.</div>
-							<a class="read-more" href="classes-detail.html">Read More</a>
-						</div>
-					</div>
-				</div>
-				
-				<!-- Classess Block -->
-				<div class="classess-block col-lg-4 col-md-6 col-sm-12">
-					<div class="inner-box">
-						<div class="image">
-							<a href="classes-detail.html"><img src="/images/resource/feature-5.jpg" alt="" /></a>
-							<div class="icon-box">
-								<span class="icon flaticon-machine"></span>
-							</div>
-						</div>
-						<div class="lower-content">
-							<div class="title">CARDIO</div>
-							<h4><a href="classes-detail.html">Cardio For Man</a></h4>
-							<div class="text">Don’t practice until you get it right practice until can’t wrong</div>
-							<a class="read-more" href="classes-detail.html">Read More</a>
-						</div>
-					</div>
-				</div>
-				
-				<!-- Classess Block -->
-				<div class="classess-block col-lg-4 col-md-6 col-sm-12">
-					<div class="inner-box">
-						<div class="image">
-							<a href="classes-detail.html"><img src="/images/resource/feature-6.jpg" alt="" /></a>
-							<div class="icon-box">
-								<span class="icon flaticon-gym"></span>
-							</div>
-						</div>
-						<div class="lower-content">
-							<div class="title">Nutrition</div>
-							<h4><a href="classes-detail.html">Advance GYM</a></h4>
-							<div class="text">Winning means you’re willing to go longer, work harder for more.</div>
-							<a class="read-more" href="classes-detail.html">Read More</a>
-						</div>
-					</div>
-				</div>
-				
-			</div>
+			<div class="box-cart-products row clearfix"></div>
 		</div>
 	</section>
 	<!-- End Classess Page Section -->
@@ -573,7 +412,7 @@ xhr.send();
 	  })
 		.done(function( data3 ) {
 		  $.each( data3.items, function( i, item ) {
-			$( "<img>" ).attr( "src", item.media.m ).appendTo( "#images" );
+		//	$( "<img>" ).attr( "src", item.media.m ).appendTo( "#images" );
 			if ( i === 3 ) {
 			  return false;
 			}
@@ -581,13 +420,33 @@ xhr.send();
 		});
 	})();
 	(function() {
-		var api1 = "/example.json";
+		var api1 = "/example2.json";
 		$.getJSON( api1, {
 		tags: "mount rainier",
 		tagmode: "any",
 		format: "json"
 	  }).done(function( data3 ) {
 		  $.each( data3.items, function( i, item ) {
+
+			$(".box-cart-products").append(
+      '<div class="classess-block col-lg-4 col-md-6 col-sm-12">'+
+		//' <div class="box-cart-product-image">'+
+	//	'<img src="' + item.image + '"/> </div> <div class="box-cart-product-name"> <span>' + item.cat + '</span></div></div>'
+	'<div class="inner-box">'+
+	'<div class="image">'+
+	'<a href="classes-detail.html"><img src="'+ item.image+'" alt="" /></a>'+
+	'<div class="icon-box">'+
+	'<span class="icon flaticon-tools-and-utensils-1"></span>'+
+	'</div>'+
+	'</div>'+
+	'<div class="lower-content">'+
+	'<div class="title">'+ item.cat+'</div>'+
+	'<h4><a href="classes-detail.html">'+ item.name+'</a></h4>'+
+	'<div class="text">'+ item.intro+'</div>'+
+	'<a class="read-more" href="'+ item.url+'">Read More</a>'+
+	'</div>'+
+	'</div>'
+    );
 		
 			$( "<img>" ).attr( "src", item.image ).appendTo( "#images" );
 			
@@ -595,13 +454,7 @@ xhr.send();
 		});
 
 	})();
-	(function () {
-        $.getJSON("example.json", function(dataw) {
-            var el = document.getElementById("show-data");
-            el.innerHTML = "<td><a href=" + dataw.key + " data-ajax='false'><img src=" + dataw.image + "><div class='dsc'>" + data.expo + "<br><em>" + data.datum + "</em></div></a></td>";
-			console.log(dataw+ 'thats');
-		});
-    })
+	
 	</script>
 
 {% include scripts2.html %}

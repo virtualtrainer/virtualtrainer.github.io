@@ -1,0 +1,59 @@
+{
+   "items": [{
+        "image": "/images/resource/feature-1.jpg",
+        "cat": "GYM",
+        "name": "Psycho Training",
+		"url": "",
+		"intro": "Winning means you’re willing to go longer, work harder for more."
+      },
+      {
+        "image": "/images/resource/feature-2.jpg",
+        "cat": "CARDIO",
+        "name": "Self Defence",
+		"url": "",
+		"intro": "Don’t practice until you get it right practice until can’t wrong"
+      },
+      {
+        "image": "/images/resource/feature-3.jpg",
+        "cat": "trird",
+        "name": false,
+		"url": "",
+		"intro": ""
+      },
+      {
+        "image": "/images/resource/feature-1.jpg",
+        "cat": "Second",
+        "name": false,
+		"url": "",
+		"intro": ""
+      },
+      {
+        "image": "/images/resource/feature-5.jpg",
+        "cat": "Second",
+        "name": false,
+		"url": "",
+		"intro": ""
+      },
+      {
+        "image": "/images/resource/feature-1.jpg",
+        "cat": "Second",
+        "name": false,
+		"url": "",
+		"intro": ""
+      },
+      {
+        "image": "/images/resource/feature-1.jpg",
+        "cat": "Second",
+        "name": false,
+		"url": "",
+		"intro": ""
+      },
+      {
+        "image": "/images/resource/feature-1.jpg",
+        "cat": "Second",
+        "name": false,
+		"url": "",
+		"intro": ""
+      }
+    ]
+}
