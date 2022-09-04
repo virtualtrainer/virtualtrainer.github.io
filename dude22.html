@@ -1,0 +1,559 @@
+
+<!DOCTYPE html>
+<!-- saved from url=(0014)about:internet -->
+<html lang="en">
+<head>
+<title>Advanced character</title>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0">
+<meta http-equiv="X-UA-Compatible" content="IE=11" />
+<meta http-equiv="Pragma" content="no-cache">
+<link rel="shortcut icon" href="favicon.ico">
+
+<style>
+* { 
+    margin: 0; padding: 0; border: 0; 
+    -webkit-user-select: none; -khtml-user-select: none; -moz-user-select: -moz-none; -o-user-select: none; 
+    /*box-sizing:border-box; -moz-box-sizing:border-box; -webkit-box-sizing:border-box;
+    user-select: none;*/
+}
+body { 
+	font-family: Consolas, Monaco, monospace;
+    font-size: 12px; 
+    margin: 0; padding: 0; border: 0;
+    background: #a8a8aa;
+    color:#000;
+    overflow: hidden;
+}
+</style>
+
+<!-- three -->
+<script src="./js/libs/three.min.js"></script>
+<script src="./js/controls/OrbitControls.js"></script>
+<!-- sea3d -->
+<script src="./js/loaders/sea3d/SEA3D.js"></script>
+<script src="./js/loaders/sea3d/SEA3DLoader.js"></script>
+<script src="./js/loaders/sea3d/SEA3DLZMA.js"></script>
+<script src="./js/loaders/sea3d/SEA3DLegacy.js"></script>
+<!-- environement -->
+<script src="./js/loaders/RGBELoader.js"></script>
+<script src="./js/pmrem/PMREMGenerator.js"></script>
+<script src="./js/pmrem/PMREMCubeUVPacker.js"></script>
+<script src="./js/lth/Environement.js"></script>
+<!-- bvh -->
+<script src="./js/loaders/BVHLoader.js"></script>
+<!-- gui -->
+<script src="./js/libs/uil.min.js"></script>
+<script src="./js/gui.js"></script>
+<!-- physics -->
+<script src="./js/geometries/Axes.js"></script>
+<script src="./js/geometries/CapsuleBufferGeometry.js"></script>
+<script src="./js/lth/PhysicsSkeleton.js"></script>
+<script src="./js/physics.js"></script>
+<!-- lth -->
+<script src="./js/lth/BVHLoader_Add.js"></script>
+<script src="./js/lth/Skeleton_Add.js"></script>
+<script src="./js/lth/SkinnedMesh_Add.js"></script>
+<script src="./js/lth/Eyes.js"></script>
+
+</head>
+<body>
+<script>
+
+var envName = "studio";
+
+var random = THREE.Math.randInt;
+
+var clock, camera, scene, renderer, controler, textureLoader, ground, bvhLoader, light, eyes, environement, mouse, vsize;
+var t = { now:0, delta:0, then:0, inter:0, tmp:0, n:0 };
+var count1 = 0;
+var nextBlink = random( 200, 600 ); 
+var meshs = {};
+var materials = {};
+var morphs = {};
+var animations = {};
+var isMorph = false;
+
+// main character reference
+var character = null;
+
+// for all physics object
+var physicsGroup = null;
+
+var helper = null;
+var isHelper = false;
+var isModel = true;
+
+var debug = false;
+
+init();
+animate( 0 );
+addGroundAndLight();
+loadModel();
+
+function init() {
+
+	clock = new THREE.Clock();
+
+	mouse = new THREE.Vector2();
+	vsize = new THREE.Vector2( window.innerWidth, window.innerHeight );
+
+	renderer = new THREE.WebGLRenderer( { antialias: true, alpha:false } );
+	renderer.setPixelRatio( window.devicePixelRatio );
+	renderer.setSize( vsize.x, vsize.y );
+	renderer.shadowMap.enabled = true;
+    renderer.shadowMap.soft = true;
+    renderer.shadowMap.type = THREE.PCFSoftShadowMap;
+    renderer.setClearColor( 0xa8a8aa, 1 );
+
+    renderer.gammaInput = true;
+    renderer.gammaOutput = true;
+    renderer.toneMapping = THREE.ACESFilmicToneMapping;
+    renderer.toneMappingExposure = 1;
+
+	document.body.appendChild( renderer.domElement );
+	renderer.domElement.style.position = "absolute";
+
+	scene = new THREE.Scene();
+
+	physicsGroup = new THREE.Group();
+	scene.add( physicsGroup );
+
+	camera = new THREE.PerspectiveCamera( 60, vsize.x / vsize.y, 1, 1000 );
+	camera.position.set( 0, 60, 120 );
+
+	controler = new THREE.OrbitControls( camera, renderer.domElement );
+	controler.target.set( 0, 40, 0 );
+    controler.screenSpacePanning = true;
+    controler.update();
+
+	window.addEventListener( 'resize', resize, false );
+
+	renderer.domElement.addEventListener( 'dragover', function(e){ e.preventDefault() }, false );
+    renderer.domElement.addEventListener( 'dragend', function(e){ e.preventDefault() }, false );
+    renderer.domElement.addEventListener( 'dragleave', function(e){ e.preventDefault()}, false );
+    renderer.domElement.addEventListener( 'drop', dropAnimation, false );
+
+    renderer.domElement.addEventListener( 'mousemove', mouseMove, false );
+    renderer.domElement.addEventListener( 'touchmove', mouseMove, false );
+
+	textureLoader = new THREE.TextureLoader();
+
+	// create hdr environement
+    environement = new Environement( renderer, scene );
+    //environement.background = false;
+
+	// init interface
+	gui.init();
+ 
+}
+
+function mouseMove ( e ) {
+
+	e.preventDefault();
+    var x = e.changedTouches ? e.changedTouches[ 0 ].pageX : e.clientX;
+    var y = e.changedTouches ? e.changedTouches[ 0 ].pageY : e.clientY;
+    mouse.set( ( x / vsize.x ) * 2 - 1, - ( y / vsize.y ) * 2 + 1 );
+
+}
+
+function resize ( e ) {
+
+	vsize.set( window.innerWidth, window.innerHeight );
+	camera.aspect = vsize.x / vsize.y;
+	camera.updateProjectionMatrix();
+	renderer.setSize( vsize.x, vsize.y );
+	gui.resize();
+
+}
+
+function animate ( time ) {
+
+	requestAnimationFrame( animate );
+
+	t.now = time;
+	t.delta = (t.now - t.then)* 0.001;
+	t.then = t.now;
+
+	characterUpdate( t.delta );
+	renderer.render( scene, camera );
+
+	// fps
+	if ( t.now - 1000 > t.tmp ){  
+		t.tmp = t.now;
+        gui.setText( t.n + ' fps' );
+        t.n = 0;
+    }
+    t.n++;
+    
+}
+
+function characterUpdate ( delta ) {
+
+	// update animation
+	THREE.SEA3D.AnimationHandler.update( delta );
+
+	// update gui
+	gui.update();
+
+	if( eyes ) eyes.look( mouse )
+
+	if(!isMorph) return;
+
+    // blink
+    var n = 0;
+    count1++;
+
+	if( count1 > nextBlink ){
+		
+		if(count1<(nextBlink+10)) n = ( count1-nextBlink ) / 10;
+		else n = 1 - ( count1-(nextBlink+10) ) / 10; 
+		meshs.Head.setWeight('blink', n );
+		if( count1>(nextBlink+20) ){ 
+			count1 = 0;
+			nextBlink = THREE.Math.randInt(200,600); 
+		}
+	}
+
+}
+
+function addGroundAndLight () {
+
+	var ambient = new THREE.HemisphereLight( 0x601010, 0xDDEEFF, 0.1 );
+	scene.add( ambient );
+
+	light = new THREE.DirectionalLight( 0xfffffc, 1 );
+	light.position.set( 0.8, 1, 0.3 ).multiplyScalar( 200 );
+    
+    light.shadow = new THREE.LightShadow( new THREE.OrthographicCamera( 300, -300, 300, -300,  100, 600 ) );
+    light.shadow.mapSize.width = light.shadow.mapSize.height = 1024;    
+    light.shadow.bias = 0.001;
+    light.shadow.radius = 2;
+    light.castShadow = true;
+    scene.add( light );
+
+    //light.add(new THREE.Mesh(new THREE.SphereBufferGeometry( 10, 24, 18 ), new THREE.MeshBasicMaterial( { color:0x006600, transparent:true, opacity:0.5, wireframe:true } )))
+
+    /*var hemiLight = new THREE.HemisphereLight( 0x4b678f, 0x887868, 0.5 );
+	hemiLight.position.set( 0, 50, 0 );
+	scene.add( hemiLight );*/
+
+	var groundMaterial = new THREE.ShadowMaterial({ opacity:0.3, depthTest:true, depthWrite:false });
+	ground = new THREE.Mesh( new THREE.PlaneBufferGeometry( 1000, 1000, 1, 1 ), groundMaterial );
+    ground.geometry.applyMatrix( new THREE.Matrix4().makeRotationX( -Math.PI*0.5 ) );
+    ground.position.y = 1;
+    ground.castShadow = false;
+    ground.receiveShadow = true;
+    ground.visible = false;
+    scene.add( ground );
+
+}
+
+// _____________________________ load
+
+function loadTexture ( url, flip ) {
+
+	var texture = textureLoader.load( url );
+	if( flip !== undefined ) texture.flipY = flip;
+	return texture;
+
+}
+
+function loadModel () {
+
+	var loader = new THREE.SEA3D()
+	loader.onComplete = function () {
+
+		// get loaded object
+		var i = loader.meshes.length, m;
+		while( i-- ){
+
+			m = loader.meshes[i];
+			meshs[ m.name ] = m;
+			scene.add( m );
+
+		}
+
+		// make material
+		meshs.Armature.material = new THREE.MeshBasicMaterial({ wireframe:true, skinning:true, transparent:true, opacity:0.1, color:0x00000 });
+		
+		materials['body'] = new THREE.MeshStandardMaterial({ 
+			map:loadTexture( './assets/textures/body.jpg', false ),
+			normalMap:loadTexture( './assets/textures/body_n.jpg', false ),
+			skinning:true, metalness:0.7, roughness:0.6, shadowSide:false 
+		});
+
+		materials['head'] = new THREE.MeshStandardMaterial({ 
+			map:loadTexture( './assets/textures/head.jpg', false ), 
+			normalMap:loadTexture( './assets/textures/head_n.jpg', false ),
+			skinning:true, morphTargets:true, metalness:0.5, roughness:0.75, shadowSide:false 
+		});
+
+		materials['head_plus'] = new THREE.MeshStandardMaterial({ 
+			map:loadTexture( './assets/textures/head_plus.jpg', false ),
+			normalMap:loadTexture( './assets/textures/head_plus_n.jpg', false ),
+			alphaMap:loadTexture( './assets/textures/head_plus_m.jpg', false ), 
+			skinning:true, morphTargets:true, metalness:0.5, roughness:0.6, shadowSide:false 
+		});
+
+		materials.head_plus.onBeforeCompile = function ( shader ) {
+			var fragment = shader.fragmentShader;
+			fragment = fragment.replace( '#include <dithering_fragment>', ['float RR = diffuseColor.a;', 'if ( RR < 0.5 ) { discard; }', ''].join("\n") );
+			shader.fragmentShader = fragment;
+		}
+
+		meshs.Body.material = meshs.Sling.material = meshs.Shoes.material = materials.body;
+		meshs.Head.material = materials.head;
+		meshs.Head_plus.material = materials.head_plus;
+
+		meshs.Body.frustumCulled = false;
+		meshs.Sling.frustumCulled = false;
+		meshs.Shoes.frustumCulled = false;
+		meshs.Head.frustumCulled = false;
+		meshs.Head_plus.frustumCulled = false;
+
+		// morphs
+		morphs = { 'anger':0, 'disgust':0, 'fear':0, 'sad':0, 'smile_closed':0, 'smile_open':0  };
+		applyMorphs();
+		isMorph = true;
+
+		// define main character
+		character = meshs.Armature;
+
+        
+        initPhysics();
+		initBVH();
+		addEyes();
+		loadEnvMap( envName );
+
+		ground.visible = true;
+
+
+		//  test
+
+		
+
+		if(debug){
+			showModel( false )
+		    simulator.isShow = true;
+		}
+		
+		//character.setTimeScale( 0.5 );
+
+		gui.select(3);
+
+	};
+
+	loader.load( './assets/models/matti.sea' );
+
+}
+
+// _____________________________ morphs
+
+function applyMorphs () {
+
+	for(var m in morphs){
+		morph( m, morphs[m] );
+	}
+
+}
+
+function morph ( name, value ) {
+
+	if(meshs.Head.morphTargetDictionary[name]) meshs.Head.setWeight( name, value );
+	if(meshs.Head_plus.morphTargetDictionary[name]) meshs.Head_plus.setWeight( name, value );
+
+}
+
+// _____________________________ animations
+
+function initBVH () {
+
+	bvhLoader = new THREE.BVHLoader();
+
+	// correct Tpose
+
+	var offsets = [
+	    ['rShldr', 0,0,-30],
+	    ['lShldr', 0,0,30],
+	    ['rThigh', 10,0,-10],
+	    ['lThigh', -10,0,10],
+	    ['rFoot', 10,-5,10],
+	    ['lFoot', -10,-5,-10],
+	    ['head', 0,-15,0],
+	];
+
+	bvhLoader.addModel( character, offsets );
+
+	// set skeleton reference, only meshs.Armature have animation
+	var skeleton = character.skeleton;
+	meshs.Body.skeleton.setReference( skeleton );
+	meshs.Sling.skeleton.setReference( skeleton );
+	meshs.Shoes.skeleton.setReference( skeleton );
+	meshs.Head.skeleton.setReference( skeleton );
+	meshs.Head_plus.skeleton.setReference( skeleton );
+
+	bvhLoader.load( "./assets/bvh/muscle.bvh", addAnimation )
+	bvhLoader.load( "./assets/bvh/idle.bvh", addAnimation );
+	bvhLoader.load( "./assets/bvh/ClubDance.bvh", addAnimation );
+
+}
+
+function parseAnimation( data, name, type ) {
+
+    var result = bvhLoader.parseData( data );
+    result.clip.name = name;
+    addAnimation( result );
+
+}
+
+function addAnimation ( result ) {
+
+    //result.clip.name = result.name;
+    var seq =  [];
+    var pos = new THREE.Vector3( 0, -2.5 ,0 );
+
+    bvhLoader.applyToModel( character, result, seq, pos );
+
+    if(result.clip.name!== 'idle' && result.clip.name!== 'ClubDance' && !debug ) character.play( result.clip.name );
+
+    animations[result.clip.name] = 1;
+
+}
+
+function dropAnimation ( e ) {
+
+    e.preventDefault();
+
+    if (e.dataTransfer.items) {
+
+        var file = e.dataTransfer.files[0];
+
+    } else return;
+
+    var reader = new FileReader();
+    var fname = file.name;
+    var type = fname.substring(fname.lastIndexOf('.')+1, fname.length );
+    var name = fname.substring(0,fname.lastIndexOf('.') );
+
+    if ( type === 'bvh' || type === 'BVH' ) reader.readAsText( file );
+    else return;
+
+    reader.onload = function ( e ) {
+
+    	parseAnimation( e.target.result, name );
+
+    };
+
+}
+
+function applyAnimationsWeight () {
+
+	var i = character.mixer._actions.length, n, name;
+	while (i--) {
+
+		n = character.mixer._actions[i];
+		name = n._clip.name;
+		n.weight = animations[name];
+
+	}
+
+}
+
+// _____________________________ eyes
+
+function addEyes () {
+
+	eyes = new Eyes();
+	eyes.setBone( 'head', character.skeleton );
+	scene.add( eyes );
+
+}
+
+/*function attachToBone ( mesh, parent, boneName ){
+
+	var bones = parent.skeleton.bones, b;
+	for( var i = 0, lng = bones.length; i < lng; i++ ){
+		b = bones[i];
+		if( b.name === boneName ){
+			mesh.matrix = b.matrixWorld;
+			mesh.matrixAutoUpdate = false;
+
+		}
+	}
+
+}*/
+
+// _____________________________ environement
+
+function loadEnvMap ( name ){
+
+    environement.load('./assets/textures/envmap/'+name+'.jpg', endLoadEnvMap );
+    if(eyes) eyes.setEnvmap( name );
+
+}
+
+function endLoadEnvMap (){
+
+	for( var m in materials ){
+
+		materials[m].envMap = environement.envmap;
+		materials[m].envMapIntensity = 1;
+		materials[m].needsUpdate = true;
+
+	}
+
+}
+
+// _____________________________ physics
+
+function initPhysics() {
+
+	physics.init( physicsStart );
+
+}
+
+function physicsStart() {
+
+	simulator.addSkeleton();
+	simulator.add({ type:'box', size:[100,10,100], pos:[0,-4,0], friction:0.5, restitution:0.2, group:1, mask:0 });
+	physics.start();
+
+}
+
+// _____________________________ skeleton helper
+
+function showModel() {
+
+    if( isModel ) isModel = false;
+    else isModel = true;
+    materials.body.depthTest = materials.head.depthTest = isModel;
+	materials.body.depthWrite = materials.head.depthWrite = isModel;
+	materials.body.transparent = materials.head.transparent = isModel ? false : true;
+	materials.body.opacity = materials.head.opacity = isModel ? 1 : 0.1;
+	materials.head_plus.visible = isModel;
+
+}
+
+function showHelper() {
+
+    if( isHelper ){
+
+        scene.remove( helper );
+        helper = null;
+        isHelper = false;
+
+    } else {
+
+        helper = new THREE.SkeletonHelper( character );
+        //helper = new THREE.SkeletonHelper( meshs.body );
+        scene.add( helper );
+        isHelper = true;
+
+    }
+
+}
+
+</script>
+</body>
+</html>
