@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Solana Phantom Wallet Integration</title>
+</head>
+<body>
+    <h1>Solana Phantom Wallet Integration</h1>
+    
+    <!-- Connect and Disconnect Buttons -->
+    <button id="connect-button">Connect to Phantom Wallet</button>
+    <button id="disconnect-button" style="display:none;">Disconnect Wallet</button>
+    
+    <!-- Wallet Information -->
+    <p id="wallet-status">Not connected</p>
+    <p id="wallet-address"></p>
+
+    <button id="create-user-button" style="display:none;">Create User Account</button>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/anchor/0.14.0-beta.1/anchor.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@solana/web3.js@1.31.0/lib/index.iife.min.js"></script>
+    <script>
+        let provider;
+        let walletAddress = '';
+
+        // Detect the Phantom provider
+        function getProvider() {
+            if ("solana" in window) {
+                const provider = window.solana;
+                if (provider.isPhantom) {
+                    return provider;
+                }
+            }
+            window.open("https://phantom.app/", "_blank");
+        }
+
+        // Update wallet status on the frontend
+        function updateWalletStatus() {
+            if (walletAddress) {
+                document.getElementById('wallet-status').innerText = 'Wallet connected!';
+                document.getElementById('wallet-address').innerText = `Wallet Address: ${walletAddress}`;
+                document.getElementById('connect-button').style.display = 'none';
+                document.getElementById('disconnect-button').style.display = 'block';
+                document.getElementById('create-user-button').style.display = 'block';
+            } else {
+                document.getElementById('wallet-status').innerText = 'Not connected';
+                document.getElementById('wallet-address').innerText = '';
+                document.getElementById('connect-button').style.display = 'block';
+                document.getElementById('disconnect-button').style.display = 'none';
+                document.getElementById('create-user-button').style.display = 'none';
+            }
+        }
+
+        // Connect to Phantom Wallet
+        document.getElementById('connect-button').addEventListener('click', async () => {
+            provider = getProvider();
+
+            if (provider) {
+                try {
+                    await provider.connect();
+                    walletAddress = provider.publicKey?.toString();
+                    updateWalletStatus();
+                } catch (err) {
+                    console.error("Wallet connection failed:", err);
+                }
+            } else {
+                console.error("Phantom provider not found.");
+            }
+        });
+
+        // Disconnect from Phantom Wallet
+        document.getElementById('disconnect-button').addEventListener('click', async () => {
+            if (provider) {
+                try {
+                    await provider.disconnect();
+                    walletAddress = '';
+                    updateWalletStatus();
+                    console.log("Wallet disconnected");
+                } catch (err) {
+                    console.error("Wallet disconnection failed:", err);
+                }
+            }
+        });
+
+        // Auto-connect if Phantom is already connected
+        window.onload = async () => {
+            provider = getProvider();
+
+            if (provider) {
+                // Try to auto-connect on load
+                await provider.connect({ onlyIfTrusted: true });
+                walletAddress = provider.publicKey?.toString();
+                updateWalletStatus();
+            }
+        };
+
+        // Create user account on Solana (optional button functionality)
+        document.getElementById('create-user-button').addEventListener('click', async () => {
+            // Create user account logic (you can place your Solana transaction code here)
+        });
+    </script>
+</body>
+</html>
