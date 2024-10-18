@@ -61,7 +61,53 @@
     <!-- Android -->
     <meta name="mobile-web-app-capable" content="yes">
     <meta name="theme-color" content="#333333">
-
+<style>
+   .carousel {
+            position: relative;
+            max-width: 600px;
+            margin: auto;
+            overflow: hidden;
+        }
+        .carousel img {
+            width: 100%;
+            display: none;
+        }
+        .carousel img.active {
+            display: block;
+        }
+        .prev, .next {
+            position: absolute;
+            top: 50%;
+            transform: translateY(-50%);
+            background-color: rgba(0, 0, 0, 0.5);
+            color: white;
+            border: none;
+            padding: 10px;
+            cursor: pointer;
+        }
+        .prev {
+            left: 10px;
+        }
+        .next {
+            right: 10px;
+        }
+        .dots {
+            text-align: center;
+            margin-top: 10px;
+        }
+        .dots span {
+            cursor: pointer;
+            height: 10px;
+            width: 10px;
+            margin: 0 5px;
+            background-color: #bbb;
+            border-radius: 50%;
+            display: inline-block;
+        }
+        .dots span.active {
+            background-color: #717171;
+        }
+</style>
   </head>
   <body>
     <header role="banner">
@@ -158,19 +204,20 @@
               </div>
               <!-- .end .column -->
               <div class="column">
-                <pre>&lt;article id="webslides"&gt;
-  <span class="code-comment">&lt;!-- Slide 1 --&gt;</span>
-  &lt;section&gt;
-    &lt;h1&gt;Design for trust&lt;/h1&gt;
-  &lt;/section&gt;
-  <span class="code-comment">&lt;!-- Slide 2 --&gt;</span>
-  &lt;section class="bg-primary"&gt;
-    &lt;div class="wrap"&gt;
-      &lt;h2&gt;.wrap = container (width: 90%)&lt;/h2&gt;
-    &lt;/div&gt;
-  &lt;/section&gt;
-&lt;/article&gt;
-</pre>
+                <div class="carousel">
+                  <img src="ai1.png" alt="Image 1" class="active">
+                  <img src="https://via.placeholder.com/600x300/7f7fff/333333?text=Image+2" alt="Image 2">
+                  <img src="https://via.placeholder.com/600x300/7fff7f/333333?text=Image+3" alt="Image 3">
+                  
+                  <button class="prev" onclick="changeSlide(-1)">&#10094;</button>
+                  <button class="next" onclick="changeSlide(1)">&#10095;</button>
+              </div>
+              
+              <div class="dots">
+                  <span onclick="goToSlide(0)" class="active"></span>
+                  <span onclick="goToSlide(1)"></span>
+                  <span onclick="goToSlide(2)"></span>
+              </div>
               </div>
               <!-- .end .column -->
             </div>
@@ -396,6 +443,36 @@
 
     <!-- OPTIONAL - svg-icons.js (fontastic.me - Font Awesome as svg icons) -->
     <script defer src="static/js/svg-icons.js"></script>
-
+    <script>
+      let currentSlide = 0;
+      let slides = document.querySelectorAll('.carousel img');
+      let dots = document.querySelectorAll('.dots span');
+  
+      function showSlide(index) {
+          slides.forEach((slide, i) => {
+              slide.classList.remove('active');
+              dots[i].classList.remove('active');
+              if (i === index) {
+                  slide.classList.add('active');
+                  dots[i].classList.add('active');
+              }
+          });
+      }
+  
+      function changeSlide(n) {
+          currentSlide = (currentSlide + n + slides.length) % slides.length;
+          showSlide(currentSlide);
+      }
+  
+      function goToSlide(n) {
+          currentSlide = n;
+          showSlide(n);
+      }
+  
+      // Auto-slide functionality
+      setInterval(() => {
+          changeSlide(1);
+      }, 3000); // Change every 3 seconds
+  </script>
   </body>
 </html>
