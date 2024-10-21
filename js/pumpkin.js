@@ -14,7 +14,7 @@ class Pumpkin{
         ctx.rect(-1,-1,2,2);
         ctx.fill();
 */
-        this.#drawHead(ctx);
+        this.#drawHead(ctx,openness);
         this.#drawEyes(ctx,openness);
         this.#drawNose(ctx,openness);
         this.#drawMouth(ctx,openness);
@@ -107,7 +107,7 @@ class Pumpkin{
 
 
     }
-    #drawHead(ctx){
+    #drawHead(ctx,openness){
         ctx.fillStyle="green";
         ctx.beginPath();
         ctx.rect(-0.05,-1,0.1,0.1);
@@ -115,18 +115,18 @@ class Pumpkin{
 
         ctx.fillStyle="rgb(255,150,0)";
         ctx.beginPath();
-        ctx.ellipse(-0.6,0.03,0.4,0.92,0,0,Math.PI*2);
+        ctx.ellipse(-0.6,0.03,0.4,0.92,-openness*0.1,0,Math.PI*2);
         ctx.fill();
         ctx.beginPath();
-        ctx.ellipse(0.6,0.03,0.4,0.92,0,0,Math.PI*2);
+        ctx.ellipse(0.6,0.03,0.4,0.92,openness*0.1,0,Math.PI*2);
         ctx.fill();
 
         ctx.fillStyle="rgb(255,170,0)";
         ctx.beginPath();
-        ctx.ellipse(-0.3,0.03,0.4,0.95,0,0,Math.PI*2);
+        ctx.ellipse(-0.3,0.03,0.4,0.95,openness*0.05,0,Math.PI*2);
         ctx.fill();
         ctx.beginPath();
-        ctx.ellipse(0.3,0.03,0.4,0.95,0,0,Math.PI*2);
+        ctx.ellipse(0.3,0.03,0.4,0.95,-openness*0.05,0,Math.PI*2);
         ctx.fill();
 
         ctx.fillStyle="rgb(255,190,0)";

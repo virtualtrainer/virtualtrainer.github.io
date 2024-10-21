@@ -1,6 +1,7 @@
 <html>
     <head>
         <script src="/js/pumpkin.js"></script>
+        <script src="/js/microphone.js"></script>
         <script>
             function main(){
                 myCanvas.width=window.innerWidth;
@@ -12,12 +13,23 @@
                     Math.min(myCanvas.width,myCanvas.height)*0.5
                 )
                // let openness=0;
-                let frameCount=0;
+               // let frameCount=0;
+
+               const microphone=new Microphone(8192);
+
                 setInterval(function(){
-                    frameCount++;
+                    if(microphone.initalized){
+                        const openness=microphone.getVolume()*6;
+                        myCanvas.getContext("2d")
+                            .clearRect(0,0,myCanvas.width,myCanvas.height);
+                        pumpkin.draw(myCanvas.getContext("2d"),openness);
+                    }
+                     /* frameCount++;
                     const openness=(Math.sin(frameCount/5)+1)/2;
+                    myCanvas.getContext("2d")
+                        .clearRect(0,0,myCanvas.width,myCanvas.height);
                     pumpkin.draw(myCanvas.getContext("2d"),openness);
-                   /* openness+=0.1;
+                  openness+=0.1;
                     if(openness>1){
                         openness=0;
                     } */
