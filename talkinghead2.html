@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Audio Volume Animation</title>
+    <style>
+        body { display: flex; justify-content: center; align-items: center; height: 100vh; margin: 0; }
+        #visualizer {
+            width: 100px;
+            height: 100px;
+            background-color: red;
+            border-radius: 50%;
+            z-index: 99; 
+            position: absolute;
+            margin: auto;
+        }
+        #audioPlayer {
+            z-index: 99;
+            position: absolute;
+            bottom: 0; /* Align to the bottom */
+            left: 0; /* Align to the left */
+    
+        }
+    </style>
+     <script src="/js/pumpkin.js"></script>
+    <script>
+             function main(){
+                myCanvas.width=window.innerWidth;
+                myCanvas.height=window.innerHeight;
+
+                const pumpkin=new Pumpkin(
+                    myCanvas.width/2,
+                    myCanvas.height/2,
+                    Math.min(myCanvas.width,myCanvas.height)*0.5
+                )
+                let openness=0;
+                let frameCount=0;
+
+         //      const microphone=new Microphone(8192);
+
+                setInterval(function(){
+                /*    if(microphone.initalized){
+                        const openness=microphone.getVolume()*6;
+                        myCanvas.getContext("2d")
+                            .clearRect(0,0,myCanvas.width,myCanvas.height);
+                        pumpkin.draw(myCanvas.getContext("2d"),openness);
+                    }
+                  */// frameCount++;
+                    const openness=(Math.sin(frameCount/5)+1)/2;
+                    myCanvas.getContext("2d")
+                        .clearRect(0,0,myCanvas.width,myCanvas.height);
+                    pumpkin.draw(myCanvas.getContext("2d"),openness);
+            //      openness+=0.1;
+                    if(openness>1){
+                        openness=0;
+                    }
+                },100)
+                
+            }
+       
+    </script>
+</head>
+<body style="margin: 0;" onload="main()">
+    <audio id="audioPlayer" controls></audio>
+<div id="visualizer"></div>
+
+    <canvas id="myCanvas"></canvas>
+
+<script>
+    // Function to get query parameters from the URL
+    function getQueryParam(param) {
+        const urlParams = new URLSearchParams(window.location.search);
+        return urlParams.get(param);
+    }
+
+    // Get the 'audio' parameter from the URL
+    const audioFile = getQueryParam('audio');
+    
+    if (audioFile) {
+        const audioPlayer = document.getElementById('audioPlayer');
+        audioPlayer.src = audioFile;
+    }
+
+    const audioElement = document.getElementById('audioPlayer');
+    const visualizer = document.getElementById('visualizer');
+
+    // Create the audio context and analyzer
+    const audioContext = new (window.AudioContext || window.webkitAudioContext)();
+    const analyser = audioContext.createAnalyser();
+    analyser.fftSize = 256; // Frequency resolution
+    const dataArray = new Uint8Array(analyser.frequencyBinCount);
+
+    // Connect the audio source to the analyser
+    const source = audioContext.createMediaElementSource(audioElement);
+    source.connect(analyser);
+    analyser.connect(audioContext.destination);
+
+    // Function to animate based on volume
+    function animate() {
+        requestAnimationFrame(animate);
+
+        // Get the frequency data from the analyser
+        analyser.getByteFrequencyData(dataArray);
+
+        // Calculate the average volume
+        let sum = 0;
+        for (let i = 0; i < dataArray.length; i++) {
+            sum += dataArray[i];
+        }
+        const averageVolume = sum / dataArray.length;
+
+        // Map volume to size for the visualizer (0-100)
+        const scale = averageVolume / 2;
+        visualizer.style.transform = `scale(${1 + scale / 100})`;
+    }
+
+    // Start the animation when audio plays
+    audioElement.addEventListener('play', () => {
+        audioContext.resume();  // Resume context if suspended (required for some browsers)
+        animate();
+    });
+
+</script>
+
+</body>
+</html>

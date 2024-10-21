@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Canvas Audio Visualizer</title>
+    <style>
+         body { display: flex; justify-content: center; align-items: center; height: 100vh; margin: 0; }
+        #visualizer {
+            width: 100px;
+            height: 100px;
+            background-color: red;
+            border-radius: 50%;
+            z-index: 99; 
+            position: absolute;
+            margin: auto;
+        }
+        #audioPlayer {
+            z-index: 99;
+            position: absolute;
+            bottom: 0; /* Align to the bottom */
+            left: 0; /* Align to the left */
+    
+        }
+        canvas {
+            border: 1px solid white;
+        }
+    </style>
+</head>
+<body>
+
+<audio id="audioPlayer" controls></audio>
+<canvas id="canvasVisualizer"></canvas>
+
+<script>
+    // Function to get query parameters from the URL
+    function getQueryParam(param) {
+        const urlParams = new URLSearchParams(window.location.search);
+        return urlParams.get(param);
+    }
+
+    // Get the 'audio' parameter from the URL
+    const audioFile = getQueryParam('audio');
+    
+    if (audioFile) {
+        const audioPlayer = document.getElementById('audioPlayer');
+        audioPlayer.src = audioFile;
+    }
+
+    const audioElement = document.getElementById('audioPlayer');
+    const canvas = document.getElementById('canvasVisualizer');
+    const ctx = canvas.getContext('2d');
+
+    // Set canvas size
+    canvas.width = window.innerWidth;
+    canvas.height = window.innerHeight;
+
+    // Create the audio context and analyzer
+    const audioContext = new (window.AudioContext || window.webkitAudioContext)();
+    const analyser = audioContext.createAnalyser();
+    analyser.fftSize = 256; // Frequency resolution
+    const dataArray = new Uint8Array(analyser.frequencyBinCount);
+
+    // Connect the audio source to the analyser
+    const source = audioContext.createMediaElementSource(audioElement);
+    source.connect(analyser);
+    analyser.connect(audioContext.destination);
+
+    // Function to draw on the canvas based on the audio data
+    function drawVisualizer() {
+        requestAnimationFrame(drawVisualizer);
+
+        // Get frequency data from analyser
+        analyser.getByteFrequencyData(dataArray);
+
+        // Clear the canvas
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+        // Calculate average volume
+        let sum = 0;
+        for (let i = 0; i < dataArray.length; i++) {
+            sum += dataArray[i];
+        }
+        const averageVolume = sum / dataArray.length;
+
+        // Set up canvas styles
+        ctx.fillStyle = 'rgba(255, 0, 0, 0.7)';
+        ctx.strokeStyle = 'rgba(255, 255, 255, 0.8)';
+        ctx.lineWidth = 5;
+
+        // Draw a circle that changes size based on volume
+        const radius = Math.max(50, (averageVolume / 255) * canvas.height / 4); // Scale radius based on volume
+
+        ctx.beginPath();
+        ctx.arc(canvas.width / 2, canvas.height / 2, radius, 0, Math.PI * 2, false);
+        ctx.fill();
+        ctx.stroke();
+    }
+
+    // Resize canvas if window is resized
+    window.addEventListener('resize', () => {
+        canvas.width = window.innerWidth;
+        canvas.height = window.innerHeight;
+    });
+
+    // Start the visualizer when audio plays
+    audioElement.addEventListener('play', () => {
+        audioContext.resume();  // Resume context if suspended (required for some browsers)
+        drawVisualizer();
+    });
+</script>
+
+</body>
+</html>
