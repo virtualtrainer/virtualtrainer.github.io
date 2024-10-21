@@ -1,0 +1,32 @@
+<html>
+    <head>
+        <script src="/js/pumpkin.js"></script>
+        <script>
+            function main(){
+                myCanvas.width=window.innerWidth;
+                myCanvas.height=window.innerHeight;
+
+                const pumpkin=new Pumpkin(
+                    myCanvas.width/2,
+                    myCanvas.height/2,
+                    Math.min(myCanvas.width,myCanvas.height)*0.5
+                )
+               // let openness=0;
+                let frameCount=0;
+                setInterval(function(){
+                    frameCount++;
+                    const openness=(Math.sin(frameCount/5)+1)/2;
+                    pumpkin.draw(myCanvas.getContext("2d"),openness);
+                   /* openness+=0.1;
+                    if(openness>1){
+                        openness=0;
+                    } */
+                },100)
+                
+            }
+        </script>
+    </head>
+    <body style="margin: 0;" onload="main()">
+        <canvas id="myCanvas"></canvas>
+    </body>
+</html>
